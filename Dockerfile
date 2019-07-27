@@ -10,6 +10,9 @@ RUN apk --update --upgrade \
 #     musl-dev gcc make g++ file alpine-sdk \
     make \
     cmake \
+    python \
+    python-dev \
+    python3-dev \
     curl \
     wget \
     vim \
@@ -23,23 +26,25 @@ RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub https://alpine-pkgs.sgerrand.com/s
 
 COPY ./mini_vimrc /root/.vimrc
 RUN vim -E -s -u "/root/.vimrc" +PlugInstall +qall || :
-# 
-# 
-# FROM alpine
-# 
-# COPY --from=BUILD /root/.vim /root/.vim
-# COPY --from=BUILD /root/.vimrc /root/.vimrc
-# 
-# RUN apk --update --upgrade add \
-#     git \
-#     less \
-#     openssh \
-#     make \
-#     cmake \
-#     curl \
-#     vim
-# 
-# 
-# ENTRYPOINT ["vim"]
-# 
-# 
+
+# -----------------------------------------------------
+
+FROM alpine
+
+WORKDIR /root
+
+COPY --from=BUILD /root/.vim /root/.vim
+COPY --from=BUILD /root/.vimrc /root/.vimrc
+
+RUN apk --update --upgrade add \
+    python3-dev \
+    git \
+    make \
+    cmake \
+    curl \
+    vim
+
+
+ENTRYPOINT ["vim"]
+
+
