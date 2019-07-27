@@ -1,0 +1,195 @@
+" mini vimrc
+
+if !filereadable(expand('~/.vim/autoload/plug.vim'))
+    if !executable("curl")
+        echoerr "You have to install curl or first install vim-plug yourself!"
+        execute "q!"
+    endif
+    echo "Installing Vim-Plug..."
+    echo ""
+    silent !\curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+    let g:not_finish_vimplug = "yes"
+    autocmd VimEnter * PlugInstall
+endif
+
+call plug#begin(expand('/root/.vim/plugged'))
+Plug 'scrooloose/nerdtree'
+" """ quickrun
+" Plug 'junegunn/vim-quickrun'
+" Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+
+""" auto bracket
+Plug 'Raimondi/delimitMate'
+Plug 'tpope/vim-surround'
+""" auto format
+Plug 'Chiel92/vim-autoformat'
+"" option bar
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+call plug#end()
+
+filetype plugin indent on
+let mapleader="\<Space>"
+
+" Plugin config
+"" ultisnips
+let g:UltiSnipsExpandTrigger="<tab>"
+let g:UltiSnipsJumpForwardTrigger="<tab>"
+let g:UltiSnipsJumpBackwardTrigger="<s-tab>"
+let g:UltiSnipsEditSplit="vertical"
+
+"" delimitMate
+let delimitMate_expand_cr = 1
+
+"" auto-format
+au BufWrite * :Autoformat
+
+"" vim-airline
+let g:airline_theme = 'powerlineish'
+let g:airline#extensions#syntastic#enabled = 1
+let g:airline#extensions#branch#enabled = 1
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tagbar#enabled = 1
+let g:airline_skip_empty_sections = 1
+
+let g:airline#extensions#virtualenv#enabled = 1
+if !exists('g:airline_symbols')
+    let g:airline_symbols = {}
+endif
+if !exists('g:airline_powerline_fonts')
+    let g:airline#extensions#tabline#left_sep = ' '
+    let g:airline#extensions#tabline#left_alt_sep = '|'
+    let g:airline_left_sep          = '▶'
+    let g:airline_left_alt_sep      = '»'
+    let g:airline_right_sep         = '◀'
+    let g:airline_right_alt_sep     = '«'
+    let g:airline#extensions#branch#prefix     = '⤴' "➔, ➥, ⎇
+    let g:airline#extensions#readonly#symbol   = '⊘'
+    let g:airline#extensions#linecolumn#prefix = '¶'
+    let g:airline#extensions#paste#symbol      = 'ρ'
+    let g:airline_symbols.linenr    = '␊'
+    let g:airline_symbols.branch    = '⎇'
+    let g:airline_symbols.paste     = 'ρ'
+    let g:airline_symbols.paste     = 'Þ'
+    let g:airline_symbols.paste     = '∥'
+    let g:airline_symbols.whitespace = 'Ξ'
+else
+    let g:airline#extensions#tabline#left_sep = ''
+    let g:airline#extensions#tabline#left_alt_sep = ''
+    let g:airline_left_sep = ''
+    let g:airline_left_alt_sep = ''
+    let g:airline_right_sep = ''
+    let g:airline_right_alt_sep = ''
+    let g:airline_symbols.branch = ''
+    let g:airline_symbols.readonly = ''
+    let g:airline_symbols.linenr = ''
+endif
+
+
+" functions
+"" txt
+augroup vimrc-wrapping
+    autocmd!
+    autocmd BufRead,BufNewFile *.txt call s:setupWrapping()
+augroup END
+if !exists('*s:setupWrapping')
+    function s:setupWrapping()
+        set wrap
+        set wm=2
+        set textwidth=79
+    endfunction
+endif
+
+"" make/cmake
+augroup vimrc-make-cmake
+    autocmd!
+    autocmd FileType make setlocal noexpandtab
+    autocmd BufNewFile,BufRead CMakeLists.txt setlocal filetype=cmake
+augroup END
+
+"" python
+augroup vimrc-python
+    autocmd!
+    autocmd FileType python setlocal
+                \ formatoptions+=croq softtabstop=4
+                \ cinwords=if,elif,else,for,while,try,except,finally,def,class,with
+augroup END
+
+
+" shortcut leader=Space
+"" save
+nmap <Leader>w :w<CR>
+"" save and exit
+nmap <Leader>q :wq<CR>
+"" とにかく終了
+nmap <Leader>Q :qa!<CR>
+
+""split
+nnoremap <Leader>s :<C-u>split<CR>
+nnoremap <Leader>v :<C-u>vsplit<CR>
+
+"" move like emacs
+nmap <C-e> $
+nmap <C-a> 0
+nmap <C-f> W
+nmap <C-b> B
+imap <C-e> <C-o>$
+imap <C-a> <C-o>0
+imap <C-f> <C-o>W
+imap <C-b> <C-o>B
+
+"" すばやく新規ファイルを作る
+nmap <Leader>e :edit 
+
+"" open terminal
+nmap <Leader>t :vertical terminal ++cols=70<CR>
+
+" buffer
+"" if aleady opened file, open buffer
+set switchbuf=useopen
+set autoread
+
+
+" base
+set encoding=utf-8
+set fileencoding=utf-8
+set fileencodings=utf-8
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
+set bomb
+set binary
+set ttyfast
+set ruler
+set number
+set backspace=indent,eol,start
+set tabstop=4
+set softtabstop=0
+set shiftwidth=4
+set expandtab
+set splitright
+set splitbelow
+set hidden
+set hlsearch
+set incsearch
+set ignorecase
+set smartcase
+set nobackup
+set noswapfile
+set fileformats=unix,dos,mac
+syntax on
+" 折り返し時に表示行単位での移動できるようにする
+set whichwrap=b,s,h,l,<,>,[,],~
+set list
+set listchars=tab:▸\ ,eol:↲,extends:❯,precedes:❮
+
+" ステータスライン周り
+set laststatus=2
+set showcmd
+set noshowmode
+
+" ESC連打でハイライト解除
+nmap <Esc><Esc> :nohlsearch<CR><Esc>
+
+set mouse=a
+
+
+
