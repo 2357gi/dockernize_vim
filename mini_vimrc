@@ -14,10 +14,11 @@ endif
 
 call plug#begin(expand('/root/.vim/plugged'))
 Plug 'scrooloose/nerdtree'
-" """ quickrun
-" Plug 'junegunn/vim-quickrun'
-" Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-
+""" quickrun
+Plug 'junegunn/vim-quickrun'
+Plug 'Shougo/vimproc.vim', {'do' : 'make'}
+"" ga -> align
+Plug 'junegunn/vim-easy-align'
 """ auto bracket
 Plug 'Raimondi/delimitMate'
 Plug 'tpope/vim-surround'
@@ -40,6 +41,21 @@ let g:UltiSnipsEditSplit="vertical"
 
 "" delimitMate
 let delimitMate_expand_cr = 1
+
+"" vim-easy-align
+xmap ga <Plug>(EasyAlign)
+nmap ga <Plug>(EasyAlign)
+
+"" NERDTree
+nmap <Leader>l :NERDTreeToggle<CR>
+
+"" quickrun
+nnoremap <Leader>go :QuickRun<CR>
+let g:quickrun_config={'*': {'split': ''}}
+let g:quickrun_config.cpp = {
+            \   'command': 'g++',
+            \   'cmdopt': '-std=c++11'
+            \ }
 
 "" auto-format
 au BufWrite * :Autoformat
@@ -85,6 +101,22 @@ else
     let g:airline_symbols.linenr = ''
 endif
 
+"" nerdtree
+let g:NERDTreeChDirMode=2
+let g:NERDTreeIgnore=['\.rbc$', '\~$', '\.pyc$', '\.db$', '\.sqlite$', '__pycache__']
+let g:NERDTreeSortOrder=['^__\.py$', '\/$', '*', '\.swp$', '\.bak$', '\~$']
+let g:NERDTreeShowBookmarks=1
+let g:nerdtree_tabs_focus_on_files=1
+let g:NERDTreeMapOpenInTabSilent = '<RightMouse>'
+let g:NERDTreeWinSize = 30
+let NERDTreeShowHidden=1
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.db,*.sqlite
+autocmd BufWritePre * :FixWhitespace
+augroup NERD
+    au!
+    autocmd VimEnter * NERDTree
+    autocmd VimEnter * wincmd p
+augroup END
 
 " functions
 "" txt
